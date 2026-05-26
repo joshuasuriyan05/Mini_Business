@@ -1,50 +1,57 @@
-const products = [ 
-            {id:1, sku:"P001", name:"Notebook", price:50, stockQty:100},
-            {id:2, sku:"P002", name:"Pen", price:10, stockQty:500},
-            {id:3, sku:"P003", name:"Marker", price:30, stockQty:20}
+const products = [
+    { id: 1, sku: "P001", name: "Notebook", price: 50, stockQty: 100 },
+    { id: 2, sku: "P002", name: "Pen", price: 10, stockQty: 500 },
+    { id: 3, sku: "P003", name: "Marker", price: 30, stockQty: 20 }
 ];
 
-const findProductsBySku = products.find(product => {
-    return product.sku === "P002";
-});
+const findProductsBySku = (products, sku)=>{
+  return products.find(product => {
+    return product.sku === sku;
+});  
+} 
 
-const calculateStockValue = products.reduce((sum, product) => {
-    return sum + (product.price * product.stockQty);
-}, 0);
+const calculateStockValue = (products) => {
+    return products.reduce((sum, product) => {
+        return sum + (product.price * product.stockQty);
+    }, 0);
+};
 
-const getLowStockProducts = products.filter(product => {
-    return product.stockQty < 50;
-});
+const getLowStockProducts = (products) => {
+    return products.filter(product => {
+        return product.stockQty < 50;
+    });
+};
 
 function validateProduct(product) {
     let errors = [];
-    if (product.sku === ""){
+    if (product.sku === "") {
         errors.push("SKU is required");
     }
-    if (product.name === ""){
+    if (product.name === "") {
         errors.push("Name is required");
     }
-    if (product.price <= 0){
+    if (product.price <= 0) {
         errors.push("Price must be a positive number");
     }
-    if (product.stockQty < 0){
+    if (product.stockQty < 0) {
         errors.push("Stock quantity cannot be negative");
     }
     return errors;
 }
 
 
-const calculateLineTotal = (price, quantity) => {
+function calculateLineTotal(price, quantity) {
     return price * quantity;
-};
+}
 
-console.log(findProductsBySku);
-console.log(calculateStockValue);
-console.log(getLowStockProducts);
+console.log(findProductsBySku(products, "P002"));
+console.log(calculateStockValue(products));
+console.log(getLowStockProducts(products));
 console.log(validateProduct({
-    sku: "", 
-    name: "", 
-    price:0, 
-    stockQty:-1})
+    sku: "",
+    name: "",
+    price: 0,
+    stockQty: -1
+})
 );
 console.log(calculateLineTotal(2, 50));
