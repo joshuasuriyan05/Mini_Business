@@ -30,7 +30,7 @@ app.get('/products/:id', (req, res) => {
 });
 
 const products1=[];
-app.post('/products', (req, res) => {
+app.post('/api/products', (req, res) => {
     const {sku, name, price, stockQty} = req.body;
      if(!sku || !name || !price || !stockQty){
         return res.status(400).json({error: "All fields are required"});
