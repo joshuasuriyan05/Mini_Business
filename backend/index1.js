@@ -16,9 +16,9 @@ const calculateStockValue = (products) => {
     }, 0);
 };
 
-const getLowStockProducts = (products) => {
+const getLowStockProducts = (products, threshold) => {
     return products.filter(product => {
-        return product.stockQty < 50;
+        return product.stockQty < threshold;
     });
 };
 
@@ -41,6 +41,12 @@ function validateProduct(product) {
 
 
 function calculateLineTotal(price, quantity) {
+    if(price <=0){
+        return "Price must be greater than zero";
+    }
+    if(quantity <=0){
+        return "Quantity must be greater than zero";
+    }
     return price * quantity;
 }
 

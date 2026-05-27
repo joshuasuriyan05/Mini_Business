@@ -14,17 +14,17 @@ function prepareProductTableRows(products){
             label: formatProductLabel(product),
             priceText: `₹${product.price}`,
             stockText: `${product.stockQty} units`,
-            stockStatus: product.stockQty < 50 ? "Available" : "Out of Stock"
+            stockStatus: product.stockQty < 50 ? "Low Stock" : "Available"
         };
     });
 }
 
 const lowStockProducts = products.filter(product => {
-    return product.stockQty < 50;
+    return product.stockQty < threshold;
 });
 console.log(formatProductLabel(products));
 console.log(prepareProductTableRows(products));
-console.log(lowStockProducts);
+console.log(lowStockProducts, 50);
 
 
 const orderItems = [
@@ -32,7 +32,10 @@ const orderItems = [
     {productId: 2, quantity: 5, rate: 10}
 ];
 
-const calculateOrderTotal = orderItems.reduce((total, item) => {
-    return total + (item.quantity * item.rate);
-},0);
-console.log(calculateOrderTotal);          
+
+const calculateOrderTotal = (orderItems) => {
+    return orderItems.reduce((total, item) => {
+        return total + (item.quantity * item.rate);
+    }, 0);
+};
+console.log(calculateOrderTotal(orderItems));          
