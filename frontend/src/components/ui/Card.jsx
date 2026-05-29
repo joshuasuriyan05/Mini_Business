@@ -1,27 +1,9 @@
-function Card({ children }) {
-
+function Card({ title, children }) {
     return (
-
-        <section
-            className="
-                rounded-2xl
-                border
-                border-cyan-300/30
-                bg-slate-900
-                p-6
-                shadow-md
-                transition
-                duration-300
-                hover:-translate-y-2
-                hover:shadow-2xl
-                hover:border-cyan-400
-            "
-        >
+        <div className="rounded-2xl border border-slate-700 bg-slate-900 p-5 shadow-lg transition hover:shadow-cyan-500/20">
+            {title && (<h2 className="mb-4 text-xl font-bold text-cyan-400">{title}</h2>)}
             {children}
-        </section>
-
+        </div>
     );
-
 }
-
 export default Card;
