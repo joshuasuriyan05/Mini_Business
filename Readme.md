@@ -162,3 +162,18 @@ className="bg-slate-800 rounded-xl shadow-lg"
 - Inventory tracking
 - Deployment
 - Frontend API integration
+
+## Database Setup
+This project uses PostgreSQL.
+Local database name:
+mini_business_app
+Basic setup:
+1. Install PostgreSQL for Windows.
+2. Open pgAdmin or psql.
+3. Create a database named `mini_business_app`.
+4. Verify the connection using:
+```sql
+SELECT version();
+```
+Do not commit real database passwords. Use `.env` for local secrets and 
+`.env.example` for placeholder values
