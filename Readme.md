@@ -176,4 +176,17 @@ Basic setup:
 SELECT version();
 ```
 Do not commit real database passwords. Use `.env` for local secrets and 
-`.env.example` for placeholder values
+`.env.example` for placeholder value
+
+## Prisma Setup
+This project uses Prisma ORM with PostgreSQL.
+Prisma files:- `backend/prisma/schema.prisma` defines database models.- `backend/prisma.config.ts` configures Prisma CLI behavior and reads `DATABASE_URL`.- `backend/prisma/migrations/` stores database structure changes.- `backend/src/lib/prisma.js` creates the reusable Prisma Client instance.
+Local setup:
+1. Create PostgreSQL database `mini_business_app`.
+2. Copy `backend/.env.example` to `backend/.env`.
+3. Set the correct local `DATABASE_URL` in `backend/.env`.
+4. Run:
+```powershell
+cd backend
+npx prisma migrate dev--name init_product
+npx prisma generate
