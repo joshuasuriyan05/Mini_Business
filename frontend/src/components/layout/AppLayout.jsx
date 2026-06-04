@@ -1,13 +1,6 @@
 import { NavLink } from "react-router-dom";
-
-import {
-    LayoutDashboard,
-    Package,
-    BriefcaseBusiness
-} from "lucide-react";
-
+import { LayoutDashboard, Package, BriefcaseBusiness } from "lucide-react";
 function AppLayout({ children }) {
-
     const linkClass = ({ isActive }) =>
         [
             "flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-300",

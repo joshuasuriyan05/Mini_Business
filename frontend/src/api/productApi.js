@@ -1,51 +1,53 @@
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 async function handleResponse(response) {
+    const data = await response.json().catch(() => null);
     if (!response.ok) {
-        let message = 'Something went wrong';
-        try {
-            const data = await response.json();
-            message = data.message || message;
-        } catch {
-            message = response.statusText || message;
-        }
-        throw new Error(message);
+        throw new Error(data?.message || 'Request failed');
     }
-    if (response.status === 204) {
-        return null;
-    }
-    return response.json();
+    return data;
 }
 export async function getProducts() {
     const response = await fetch(`${API_BASE_URL}/api/products`);
     return handleResponse(response);
 }
-export async function getProductById(id) {
-    const response = await fetch(`${API_BASE_URL}/api/products/${id}`);
+export async function getProductById(productId) {
+    const response = await fetch(
+        `${API_BASE_URL}/api/products/${productId}`
+    );
     return handleResponse(response);
 }
-export async function createProduct(product) {
+export async function createProduct(productData) {
     const response = await fetch(`${API_BASE_URL}/api/products`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify(product)
+        body: JSON.stringify(productData)
     });
     return handleResponse(response);
 }
-export async function updateProduct(id, product) {
-    const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
-        method: 'PATCH',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(product)
-    });
+export async function updateProduct(productId, productData) {
+    const response = await fetch(
+        `${API_BASE_URL}/api/products/${productId}`,
+        {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(productData)
+        }
+    );
     return handleResponse(response);
 }
-export async function deleteProduct(id) {
-    const response = await fetch(`${API_BASE_URL}/api/products/${id}`, {
-        method: 'DELETE'
-    });
+export async function deleteProduct(productId) {
+    const response = await fetch(
+        `${API_BASE_URL}/api/products/${productId}`,
+        {
+            method: 'DELETE'
+        }
+    );
+    if (response.status === 204) {
+        return null;
+    }
     return handleResponse(response);
 }

@@ -55,10 +55,4 @@ async function deleteProduct(req, res, next) {
         next(error);
     }
 }
-module.exports = {
-    listProducts,
-    getProduct,
-    createProduct,
-    updateProduct,
-    deleteProduct
-};
+module.exports = { listProducts, getProduct, createProduct, updateProduct, deleteProduct };

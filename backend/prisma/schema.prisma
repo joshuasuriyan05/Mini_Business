@@ -2,11 +2,10 @@ generator client {
   provider = "prisma-client-js"
   output   = "../src/generated/prisma"
 }
-
 datasource db {
   provider = "postgresql"
+  url = env("DATABASE_URL")
 }
-
 model Product {
   id        Int      @id @default(autoincrement())
   sku       String   @unique
@@ -16,4 +15,14 @@ model Product {
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+model Customer {
+  id        Int           @id @default(autoincrement())
+  code      String        @unique
+  name      String
+  phone     String?
+  email     String?
+  isActive  Boolean       @default(true)
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
 }

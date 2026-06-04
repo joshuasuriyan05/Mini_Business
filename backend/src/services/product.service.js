@@ -88,7 +88,6 @@ async function updateProduct(id, data) {
     const updateData = {};
     if (data.sku !== undefined) {
         updateData.sku = String(data.sku).trim();
-    
     }
     if (data.name !== undefined) {
         updateData.name = String(data.name).trim();
@@ -127,15 +126,8 @@ async function deleteProduct(id) {
             id
         },
         data: {
-
             isActive: false
-}
+        }
     });
 }
-module.exports = {
-    getAllProducts,
-    getProductById,
-    createProduct,
-    updateProduct,
-    deleteProduct
-};
+module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct };
