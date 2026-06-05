@@ -61,28 +61,28 @@ function ProductsPage() {
                     <div role="alert" className="rounded-md border border-red-300 bg-red-100 p-4 text-red-700">
                         {error}
                     </div>
-                ) : products.length === 0 ? (
-                    <div className="rounded-md border border-dashed border-slate-600 p-6 text-center">
-                        <p className="text-lg font-semibold text-white">
-                            No products found
-                        </p>
-                        <p className="mt-2 text-slate-300">
-                            Create your first product from the backend API.
-                        </p>
-                    </div>
-                ) : (
-                    <div className="overflow-x-auto">
-                        <table className="w-full text-left">
-                            <thead>
-                                <tr className="bg-slate-800 text-cyan-300">
-                                    <th className="px-6 py-4">SKU</th>
-                                    <th className="px-6 py-4">Name</th>
-                                    <th className="px-6 py-4">Price</th>
-                                    <th className="px-6 py-4">Stock</th>
-                                    <th className="px-6 py-4">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    ) : products.length === 0 ? (
+                        <div className="rounded-md border border-dashed border-slate-600 p-6 text-center">
+                            <p className="text-lg font-semibold text-white">
+                                No products found
+                            </p>
+                            <p className="mt-2 text-slate-300">
+                                Create your first product from the backend API.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead>
+                                    <tr className="bg-slate-800 text-cyan-300">
+                                        <th className="px-6 py-4">SKU</th>
+                                        <th className="px-6 py-4">Name</th>
+                                        <th className="px-6 py-4">Price</th>
+                                        <th className="px-6 py-4">Stock</th>
+                                        <th className="px-6 py-4">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                                 {products.map((product) => (
                                     <tr key={product.id} className="border-b border-slate-700 hover:bg-slate-800/40">
                                         <td className="px-6 py-4 font-semibold text-cyan-300">
@@ -117,5 +117,4 @@ function ProductsPage() {
         </div>
     );
 }
-
 export default ProductsPage;
