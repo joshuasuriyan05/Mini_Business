@@ -115,6 +115,27 @@ exports.Prisma.CustomerScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.SalesOrderScalarFieldEnum = {
+  id: 'id',
+  orderNo: 'orderNo',
+  customerId: 'customerId',
+  status: 'status',
+  totalAmount: 'totalAmount',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.SalesOrderItemScalarFieldEnum = {
+  id: 'id',
+  salesOrderId: 'salesOrderId',
+  productId: 'productId',
+  quantity: 'quantity',
+  unitPrice: 'unitPrice',
+  totalPrice: 'totalPrice',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -133,7 +154,9 @@ exports.Prisma.NullsOrder = {
 
 exports.Prisma.ModelName = {
   Product: 'Product',
-  Customer: 'Customer'
+  Customer: 'Customer',
+  SalesOrder: 'SalesOrder',
+  SalesOrderItem: 'SalesOrderItem'
 };
 /**
  * Create the Client
@@ -174,7 +197,6 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
-  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -183,13 +205,13 @@ const config = {
       }
     }
   },
-  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Product {\n  id        Int      @id @default(autoincrement())\n  sku       String   @unique\n  name      String\n  price     Decimal\n  stockQty  Int      @default(0)\n  isActive  Boolean  @default(true)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n\nmodel Customer {\n  id        Int      @id @default(autoincrement())\n  code      String   @unique\n  name      String\n  phone     String?\n  email     String?\n  isActive  Boolean  @default(true)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n}\n",
-  "inlineSchemaHash": "2547090a32c05c872ca700f34801472cbec922e54b0c1b2003765b87d9e527b6",
+  "inlineSchema": "generator client {\n  provider = \"prisma-client-js\"\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n  url      = env(\"DATABASE_URL\")\n}\n\nmodel Product {\n  id              Int              @id @default(autoincrement())\n  sku             String           @unique\n  name            String\n  price           Decimal\n  stockQty        Int              @default(0)\n  isActive        Boolean          @default(true)\n  createdAt       DateTime         @default(now())\n  updatedAt       DateTime         @updatedAt\n  salesOrderItems SalesOrderItem[]\n}\n\nmodel Customer {\n  id          Int          @id @default(autoincrement())\n  code        String       @unique\n  name        String\n  phone       String?\n  email       String?\n  isActive    Boolean      @default(true)\n  createdAt   DateTime     @default(now())\n  updatedAt   DateTime     @updatedAt\n  salesOrders SalesOrder[]\n}\n\nmodel SalesOrder {\n  id          Int              @id @default(autoincrement())\n  orderNo     String           @unique\n  customerId  Int\n  status      String           @default(\"DRAFT\")\n  totalAmount Decimal          @default(0)\n  createdAt   DateTime         @default(now())\n  updatedAt   DateTime         @updatedAt\n  customer    Customer         @relation(fields: [customerId], references: [id])\n  items       SalesOrderItem[]\n}\n\nmodel SalesOrderItem {\n  id           Int        @id @default(autoincrement())\n  salesOrderId Int\n  productId    Int\n  quantity     Int\n  unitPrice    Decimal\n  totalPrice   Decimal    @default(0)\n  createdAt    DateTime   @default(now())\n  updatedAt    DateTime   @updatedAt\n  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id])\n  product      Product    @relation(fields: [productId], references: [id])\n}\n",
+  "inlineSchemaHash": "81edc4f06fa15663454ee80222711f9c34e814561e48926b5cf1ffbef2ac2819",
   "copyEngine": true
 }
 config.dirname = '/'
 
-config.runtimeDataModel = JSON.parse("{\"models\":{\"Product\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"sku\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"stockQty\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null},\"Customer\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
+config.runtimeDataModel = JSON.parse("{\"models\":{\"Product\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"sku\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"price\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"stockQty\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"salesOrderItems\",\"kind\":\"object\",\"type\":\"SalesOrderItem\",\"relationName\":\"ProductToSalesOrderItem\"}],\"dbName\":null},\"Customer\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"code\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"name\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"phone\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"email\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"isActive\",\"kind\":\"scalar\",\"type\":\"Boolean\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"salesOrders\",\"kind\":\"object\",\"type\":\"SalesOrder\",\"relationName\":\"CustomerToSalesOrder\"}],\"dbName\":null},\"SalesOrder\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"orderNo\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"customerId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"status\",\"kind\":\"scalar\",\"type\":\"String\"},{\"name\":\"totalAmount\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"customer\",\"kind\":\"object\",\"type\":\"Customer\",\"relationName\":\"CustomerToSalesOrder\"},{\"name\":\"items\",\"kind\":\"object\",\"type\":\"SalesOrderItem\",\"relationName\":\"SalesOrderToSalesOrderItem\"}],\"dbName\":null},\"SalesOrderItem\":{\"fields\":[{\"name\":\"id\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"salesOrderId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"productId\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"quantity\",\"kind\":\"scalar\",\"type\":\"Int\"},{\"name\":\"unitPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"totalPrice\",\"kind\":\"scalar\",\"type\":\"Decimal\"},{\"name\":\"createdAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"updatedAt\",\"kind\":\"scalar\",\"type\":\"DateTime\"},{\"name\":\"salesOrder\",\"kind\":\"object\",\"type\":\"SalesOrder\",\"relationName\":\"SalesOrderToSalesOrderItem\"},{\"name\":\"product\",\"kind\":\"object\",\"type\":\"Product\",\"relationName\":\"ProductToSalesOrderItem\"}],\"dbName\":null}},\"enums\":{},\"types\":{}}")
 defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 config.engineWasm = {
   getRuntime: async () => require('./query_engine_bg.js'),

@@ -45,7 +45,7 @@ function CustomersPage() {
                     </p>
                 </div>
                 <Link to="/customers/new" className="rounded-md bg-blue-500 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-green-700">
-                    Add Customer
+                   + Add Customer
                 </Link>
             </div>
             <Card>
