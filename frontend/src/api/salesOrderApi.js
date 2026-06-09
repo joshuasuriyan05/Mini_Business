@@ -11,6 +11,22 @@ export async function getSalesOrders() {
     return handleResponse(response);
 }
 export async function getSalesOrderById(id) {
-    const response = await fetch(`${API_BASE_URL}/api/sales-orders/${id}`);
+    const response = await fetch(
+        `${API_BASE_URL}/api/sales-orders/${id}`
+    );
+
+    return handleResponse(response);
+}
+export async function createSalesOrder(orderData) {
+    const response = await fetch(
+        `${API_BASE_URL}/api/sales-orders`,
+        {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        }
+    );
     return handleResponse(response);
 }

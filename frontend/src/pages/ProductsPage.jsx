@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import Card from '../components/ui/Card';
 import { getProducts, deleteProduct } from '../api/productApi';
 import { Link } from 'react-router-dom';
+
 function formatPrice(price) {
     return `Rs. ${Number(price).toFixed(2)}`;
 }
@@ -37,6 +38,7 @@ function ProductsPage() {
             alert(err.message || 'Failed to delete product');
         }
     }
+
     return (
         <div>
             <div className="mb-6 flex items-center justify-between">

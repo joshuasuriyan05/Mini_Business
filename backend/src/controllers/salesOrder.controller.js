@@ -35,7 +35,12 @@ async function getSalesOrder(req, res, next) {
     next(error);
   }
 }
-module.exports = {
-  listSalesOrders,
-  getSalesOrder
-};
+async function createSalesOrder(req, res, next) {
+  try {
+    const salesOrder = await salesOrderService.createSalesOrder(req.body);
+    res.status(201).json(salesOrder);
+  } catch (error) {
+    next(error);
+  }
+}
+module.exports = { listSalesOrders, getSalesOrder, createSalesOrder};

@@ -2,12 +2,7 @@ import { NavLink } from "react-router-dom";
 import { LayoutDashboard, Package, BriefcaseBusiness, ShoppingCart} from "lucide-react";
 function AppLayout({ children }) {
     const linkClass = ({ isActive }) =>
-        [
-            "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 whitespace-nowrap",
-            isActive
-                ? "bg-cyan-500 text-white shadow-md"
-                : "text-slate-300 hover:bg-slate-800 hover:text-white"
-        ].join(" ");
+        [ "flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all duration-300 whitespace-nowrap", isActive ? "bg-cyan-500 text-white shadow-md": "text-slate-300 hover:bg-slate-800 hover:text-white"].join(" ");
     return (
         <div className="min-h-screen bg-slate-500 text-white">
             <header className="border-b border-slate-700 bg-slate-900 shadow-lg">

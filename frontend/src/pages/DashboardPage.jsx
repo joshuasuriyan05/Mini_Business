@@ -1,4 +1,5 @@
 import Card from "../components/ui/Card";
+
 const summary = [
     { label: "Products", value: 3, icon: "📦" },
     { label: "Customers", value: 0, icon: "👥" },
