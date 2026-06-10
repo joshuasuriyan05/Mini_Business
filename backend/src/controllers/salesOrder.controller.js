@@ -43,4 +43,12 @@ async function createSalesOrder(req, res, next) {
     next(error);
   }
 }
-module.exports = { listSalesOrders, getSalesOrder, createSalesOrder};
+async function confirmSalesOrder(req, res, next) {
+  try {
+    const order = await salesOrderService.confirmSalesOrder(req.params.id);
+    res.json(order);
+  } catch (error) {
+    next(error);
+  }
+}
+module.exports = { listSalesOrders, getSalesOrder, createSalesOrder, confirmSalesOrder };

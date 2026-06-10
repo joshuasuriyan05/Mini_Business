@@ -137,9 +137,7 @@ async function createSalesOrder(data) {
         };
     });
     const totalAmount = orderItems.reduce(
-        (sum, item) => sum + Number(item.totalPrice),
-        0
-    );
+        (sum, item) => sum + Number(item.totalPrice), 0);
     const orderNo = await generateOrderNo();
     return prisma.salesOrder.create({
         data: {
@@ -161,4 +159,88 @@ async function createSalesOrder(data) {
         }
     });
 }
-module.exports = { getSalesOrders, getSalesOrderById, createSalesOrder, calculateLineTotal };
+async function confirmSalesOrder(id) {
+    const orderId = Number(id);
+    return prisma.$transaction(async (tx) => {
+        const order = await tx.salesOrder.findUnique({
+            where: { id: orderId },
+            include: {
+                items: {
+                    include: {
+                        product: true
+                    }
+                },
+                customer: true
+            }
+        });
+        if (!order) {
+            const error = new Error('Sales order not found');
+            error.statusCode = 404;
+            throw error;
+        }
+        if (order.status !== 'DRAFT') {
+            const error = new Error('Only draft orders can be confirmed');
+            error.statusCode = 400;
+            throw error;
+        }
+        if (!order.items || order.items.length === 0) {
+            const error = new Error('Cannot confirm an order without items');
+            error.statusCode = 400;
+            throw error;
+        }
+        for (const item of order.items) {
+            if (item.quantity <= 0) {
+                const error = new Error('Order item quantity must be greater than zero');
+                error.statusCode = 400;
+                throw error;
+            }
+            if (!item.product) {
+                const error = new Error('Order item product not found');
+                error.statusCode = 400;
+                throw error;
+            }
+            if (item.product.stockQty < item.quantity) {
+                const error = new Error(
+                    `Insufficient stock for product ${item.product.name}`
+                );
+                error.statusCode = 400;
+                throw error;
+            }
+        }
+        for (const item of order.items) {
+            await tx.product.update({
+                where: { id: item.productId },
+                data: {
+                    stockQty: {
+                        decrement: item.quantity
+                    }
+                }
+            });
+            await tx.stockMovement.create({
+                data: {
+                    productId: item.productId,
+                    movementType: 'OUT',
+                    quantity: item.quantity,
+                    referenceType: 'SALES_ORDER',
+                    referenceId: order.id
+                }
+            });
+        }
+        const confirmedOrder = await tx.salesOrder.update({
+            where: { id: order.id },
+            data: {
+                status: 'CONFIRMED'
+            },
+            include: {
+                customer: true,
+                items: {
+                    include: {
+                        product: true
+                    }
+                }
+            }
+        });
+        return confirmedOrder;
+    });
+}
+module.exports = { getSalesOrders, getSalesOrderById, createSalesOrder, calculateLineTotal, confirmSalesOrder};
