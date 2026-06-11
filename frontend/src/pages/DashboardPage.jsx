@@ -1,13 +1,43 @@
+import { useState, useEffect } from "react";
 import Card from "../components/ui/Card";
+import api from '../api/api.js';
 
-const summary = [
-    { label: "Products", value: 3, icon: "📦" },
-    { label: "Customers", value: 0, icon: "👥" },
-    { label: "Sales Orders", value: 0, icon: "🛒" },
-];
 function DashboardPage() {
-    return (
-        <div className="animate-fadeIn">
+  const [summary, setSummary] = useState([
+    { label: 'Products', value: 0, icon: '📦' },
+    { label: 'Customers', value: 0, icon: '👥' },
+    { label: 'Sales Orders', value: 0, icon: '🛒' },
+  ]);
+  useEffect(() => {
+    loadDashboardStats();
+  }, []);
+  async function loadDashboardStats() {
+    try {
+      const response = await api.get('/dashboard/stats');
+      setSummary([
+        {
+          label: 'Products',
+          value: response.data.products,
+          icon: '📦',
+        },
+        {
+          label: 'Customers',
+          value: response.data.customers,
+          icon: '👥',
+        },
+        {
+          label: 'Sales Orders',
+          value: response.data.salesOrders,
+          icon: '🛒',
+        },
+      ]);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  return (
+    <div className="animate-fadeIn">
             <div className="mb-10 text-center">
                 <h2 className="text-5xl font-extrabold tracking-wide text-cyan-400 drop-shadow-lg animate-pulse">Dashboard</h2>
                 <p className="mt-3 text-slate-300 text-lg">Welcome to Mini Business Operations</p>
