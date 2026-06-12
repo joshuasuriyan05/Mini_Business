@@ -1,4 +1,4 @@
-const { prisma } = require('../lib/prisma');
+const {prisma} = require('../lib/prisma');
 function createError(message, statusCode = 400) {
     const error = new Error(message);
     error.statusCode = statusCode;

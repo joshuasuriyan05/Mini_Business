@@ -1,22 +1,10 @@
-const { prisma } = require('../lib/prisma');
+const dashboardService = require('../services/dashboard.service');
 
 async function getDashboardStats(req, res, next) {
   try {
-    const products = await prisma.product.count({
-      where: { isActive: true },
-    });
+    const stats = await dashboardService.getDashboardStats();
 
-    const customers = await prisma.customer.count({
-      where: { isActive: true },
-    });
-
-    const salesOrders = await prisma.salesOrder.count();
-
-    res.json({
-      products,
-      customers,
-      salesOrders,
-    });
+    res.json(stats);
   } catch (error) {
     next(error);
   }

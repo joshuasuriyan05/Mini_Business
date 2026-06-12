@@ -190,3 +190,20 @@ Local setup:
 cd backend
 npx prisma migrate dev--name init_product
 npx prisma generate
+
+## Week 3 Business Flow Test Scenarios
+### Backend API tests
+Run backend tests:
+```powershell
+cd backend
+npm test
+```
+Covered API scenarios:- Health endpoint works- Product can be created- Customer can be created- Draft sales order can be created- Sales order can be confirmed- Product stock reduces after confirmation- Double confirmation is blocked- Insufficient stock is rejected
+### Manual UI test scenario
+1. Create product.
+2. Create customer.
+3. Create sales order.
+4. Confirm sales order.
+5. Verify stock reduction.
+6. Verify double confirmation is blocked.
+7. Verify insufficient stock is rejected
