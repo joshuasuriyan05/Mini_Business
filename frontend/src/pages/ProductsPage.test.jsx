@@ -29,7 +29,6 @@ vi.mock('../api/productApi', () => ({
   ]),
   deleteProduct: vi.fn(),
 }));
-
 function renderProductsPage() {
   return render(
     <MemoryRouter>
@@ -37,75 +36,40 @@ function renderProductsPage() {
     </MemoryRouter>
   );
 }
-
 describe('ProductsPage', () => {
   it('shows the products page heading and helper text', async () => {
     renderProductsPage();
-
-    expect(
-      await screen.findByRole('heading', {
-        name: /products/i,
-      })
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByText(/loaded from the backend api/i)
-    ).toBeInTheDocument();
+    expect(await screen.findByRole('heading', {
+        name: /products/i,})).toBeInTheDocument();
+    expect(screen.getByText(/loaded from the backend api/i)).toBeInTheDocument();
   });
-
   it('shows the Add Product link', async () => {
     renderProductsPage();
-
-    expect(
-      await screen.findByRole('link', {
-        name: /add product/i,
-      })
-    ).toBeInTheDocument();
+    expect(await screen.findByRole('link', {
+        name: /add product/i,})).toBeInTheDocument();
   });
-
   it('shows product table headers after products are loaded', async () => {
     renderProductsPage();
-
-    expect(
-      await screen.findByRole('columnheader', {
-        name: /sku/i,
-      })
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole('columnheader', {
-        name: /name/i,
-      })
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole('columnheader', {
-        name: /price/i,
-      })
-    ).toBeInTheDocument();
-
-    expect(
-      screen.getByRole('columnheader', {
+    expect(await screen.findByRole('columnheader', {
+        name: /sku/i,})).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', {
+        name: /name/i,})).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', {
+        name: /price/i,})).toBeInTheDocument();
+    expect(screen.getByRole('columnheader', {
         name: /stock/i,
       })
     ).toBeInTheDocument();
-
     expect(
       screen.getByRole('columnheader', {
-        name: /actions/i,
-      })
-    ).toBeInTheDocument();
+        name: /actions/i, })).toBeInTheDocument();
   });
-
   it('renders products returned by the API', async () => {
     renderProductsPage();
-
     expect(await screen.findByText('P001')).toBeInTheDocument();
     expect(screen.getByText('Notebook')).toBeInTheDocument();
-
     expect(screen.getByText('P002')).toBeInTheDocument();
     expect(screen.getByText('Pen')).toBeInTheDocument();
-
     expect(screen.getByText('P003')).toBeInTheDocument();
     expect(screen.getByText('Marker')).toBeInTheDocument();
   });

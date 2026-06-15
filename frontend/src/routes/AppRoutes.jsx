@@ -7,7 +7,7 @@ import CustomerFormPage from '../pages/CustomerFormPage';
 import SalesOrdersPage from '../pages/SalesOrdersPage';
 import SalesOrderCreatePage from '../pages/SalesOrderCreatePage';
 import SalesOrderDetailPage from '../pages/SalesOrderDetailPage';
-
+import StockMovementsPage from '../pages/StockMovementsPage';
 function AppRoutes() {
     return (
         <Routes>
@@ -21,6 +21,7 @@ function AppRoutes() {
             <Route path="/sales-orders" element={<SalesOrdersPage />} />
             <Route path="/sales-orders/new" element={<SalesOrderCreatePage />} />
             <Route path="/sales-orders/:id" element={<SalesOrderDetailPage />} />
+            <Route path="/stock-movements" element={<StockMovementsPage />} />
         </Routes>
     );
 }

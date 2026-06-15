@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getSalesOrders } from '../api/salesOrderApi';
 import Card from '../components/ui/Card';
+import LoadingMessage from '../components/ui/LoadingMessage';
+import ErrorMessage from '../components/ui/ErrorMessage';
+import EmptyState from '../components/ui/EmptyState';
 
 function formatCurrency(value) {
     return `₹${Number(value || 0).toFixed(2)}`;
@@ -58,22 +61,11 @@ function SalesOrdersPage() {
 
             <Card>
                 {loading ? (
-                        <p className="text-white">
-                            Loading sales orders...
-                        </p>
+                        <LoadingMessage message="Loading sales orders..." />
                     ) : error ? (
-                        <div role="alert" className="rounded-md border border-red-300 bg-red-100 p-4 text-red-700">
-                            {error}
-                        </div>
+                        <ErrorMessage message={error} />
                     ) : orders.length === 0 ? (
-                        <div className="rounded-md border border-dashed border-slate-600 p-6 text-center">
-                            <p className="text-lg font-semibold text-white">
-                                No sales orders found
-                            </p>
-                            <p className="mt-2 text-slate-300">
-                                Create your first sales order from the backend API.
-                            </p>
-                        </div>
+                       <EmptyState title="No sales order found" description="Create a sales order after products and customers are ready."/>
                     ) : (
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
@@ -94,7 +86,7 @@ function SalesOrdersPage() {
                                             <td className="px-6 py-4 font-semibold text-cyan-300">
                                                 {order.orderNo}
                                             </td>
-                                            <td className="px-6 py-4 text-white">
+                                            <td className="px-6 py-4 font-semibold text-white">
                                                 {order.customer?.name || '-'}
                                             </td>
                                             <td className="px-6 py-4">
@@ -102,13 +94,13 @@ function SalesOrdersPage() {
                                                     {order.status}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 text-white">
+                                            <td className="px-6 py-4 font-semibold text-white">
                                                 {order.itemCount}
                                             </td>
                                             <td className="px-6 py-4 font-semibold text-green-400">
                                                 {formatCurrency(order.totalAmount)}
                                             </td>
-                                            <td className="px-6 py-4 text-slate-300">
+                                            <td className="px-6 py-4 font-semibold text-slate-300">
                                                 {formatDate(order.createdAt)}
                                             </td>
                                             <td className="px-6 py-4">

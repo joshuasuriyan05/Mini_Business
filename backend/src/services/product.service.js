@@ -1,3 +1,4 @@
+const { createAppError } = require('../utils/appError');
 const {prisma} = require('../lib/prisma');
 function normalizeProductInput(data) {
     return {
@@ -81,9 +82,7 @@ async function updateProduct(id, data) {
     validateProductInput(data, { partial: true });
     const existingProduct = await getProductById(id);
     if (!existingProduct) {
-        const error = new Error('Product not found');
-        error.statusCode = 404;
-        throw error;
+        throw createAppError('SKU already exists', 400);
     }
     const updateData = {};
     if (data.sku !== undefined) {
@@ -117,9 +116,7 @@ async function updateProduct(id, data) {
 async function deleteProduct(id) {
     const existingProduct = await getProductById(id);
     if (!existingProduct) {
-        const error = new Error('Product not found');
-        error.statusCode = 404;
-        throw error;
+        throw createAppError('SKU already exists', 400);
     }
     return prisma.product.update({
         where: {

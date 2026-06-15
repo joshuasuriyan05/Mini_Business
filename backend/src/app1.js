@@ -5,7 +5,7 @@ const productRoutes = require('./routes/product.routes');
 const customerRoutes = require('./routes/customer.routes');
 const salesOrderRoutes = require('./routes/salesOrder.routes');
 const dashboardRoutes = require('./routes/dashboard.routes');
-
+const stockMovementRoutes = require('./routes/stockMovement.routes');
 const notFound = require('./middleware/notFound');
 const errorHandler = require('./middleware/errorHandler');
 
@@ -22,7 +22,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/sales-orders', salesOrderRoutes);
 app.use('/api/dashboard', dashboardRoutes);
-
+app.use('/api/stock-movements', stockMovementRoutes);
 app.use(notFound);
 app.use(errorHandler);
 

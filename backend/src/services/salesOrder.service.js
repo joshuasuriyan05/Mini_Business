@@ -1,4 +1,7 @@
 const { prisma } = require('../lib/prisma');
+const { createAppError } = require('../utils/appError');
+const { calculateLineTotal, calculateOrderTotal, } = require('../utils/salesOrderCalculations');
+
 async function getSalesOrders() {
   return prisma.salesOrder.findMany({
     include: {
@@ -25,30 +28,22 @@ async function getSalesOrderById(id) {
     },
   });
 }
-function createError(message, statusCode = 400) {
-  const error = new Error(message);
-  error.statusCode = statusCode;
-  return error;
-}
-function calculateLineTotal(quantity, rate) {
-  return Number(quantity) * Number(rate);
-}
 function validateOrderInput(data) {
   if (!data.customerId) {
-    throw createError('Customer is required');
+    throw createAppError('Customer is required');
   }
   if (!Array.isArray(data.items) || data.items.length === 0) {
-    throw createError('Order must have at least one item');
+    throw createAppError('Order must have at least one item');
   }
   for (const item of data.items) {
     if (!item.productId) {
-      throw createError('Product is required');
+      throw createAppError('Product is required');
     }
     if (Number(item.quantity) <= 0) {
-      throw createError('Quantity must be greater than zero');
+      throw createAppError('Quantity must be greater than zero');
     }
     if (Number(item.rate) <= 0) {
-      throw createError('Rate must be greater than zero');
+      throw createAppError('Rate must be greater than zero');
     }
   }
 }
@@ -64,9 +59,9 @@ async function createSalesOrder(data) {
     },
   });
   if (!customer) {
-    throw createError('Customer not found', 404);
+    throw createAppError('Customer not found', 404);
   }
-  const productIds = data.items.map(item =>
+  const productIds = data.items.map((item) =>
     Number(item.productId)
   );
   const products = await prisma.product.findMany({
@@ -76,25 +71,26 @@ async function createSalesOrder(data) {
       },
     },
   });
-  const foundIds = new Set(products.map(p => p.id));
+  const foundIds = new Set(products.map((p) => p.id));
   for (const id of productIds) {
     if (!foundIds.has(id)) {
-      throw createError('One or more products are invalid');
+      throw createAppError('One or more products are invalid', 400);
     }
   }
-  const orderItems = data.items.map(item => {
-    const quantity = Number(item.quantity);
-    const rate = Number(item.rate);
-    return {
-      productId: Number(item.productId),
-      quantity,
-      unitPrice: rate,
-      totalPrice: calculateLineTotal(quantity, rate),
-    };
-  });
-  const totalAmount = orderItems.reduce(
-    (sum, item) => sum + item.totalPrice,
-    0
+  const orderItems = data.items.map((item) => ({
+    productId: Number(item.productId),
+    quantity: Number(item.quantity),
+    unitPrice: Number(item.rate),
+    totalPrice: calculateLineTotal(
+      item.quantity,
+      item.rate
+    ),
+  }));
+  const totalAmount = calculateOrderTotal(
+    data.items.map((item) => ({
+      quantity: Number(item.quantity),
+      rate: Number(item.rate),
+    }))
   );
   const orderNo = await generateOrderNo();
   return prisma.salesOrder.create({
@@ -128,21 +124,23 @@ async function confirmSalesOrder(id) {
       },
     });
     if (!order) {
-      throw createError('Sales order not found', 404);
+      throw createAppError('Sales order not found', 404);
     }
     if (order.status !== 'DRAFT') {
-      throw createError('Only draft orders can be confirmed',400);
+      throw createAppError('Only draft orders can be confirmed', 400);
     }
     for (const item of order.items) {
       if (!item.product) {
-        throw createError(`Product ${item.productId} not found`,404);
+        throw createAppError(`Product ${item.productId} not found`, 404);
       }
       if (item.product.stockQty <= 0) {
-        throw createError(`${item.product.name} is out of stock`,400
-        );
+        throw createAppError(`${item.product.name} is out of stock`, 400);
       }
       if (item.quantity > item.product.stockQty) {
-        throw createError(`Insufficient stock for ${item.product.name}. Available: ${item.product.stockQty}`,400);
+        throw createAppError(
+          `Insufficient stock for ${item.product.name}. Available: ${item.product.stockQty}`,
+          400
+        );
       }
     }
     for (const item of order.items) {
@@ -185,4 +183,4 @@ async function confirmSalesOrder(id) {
     return updatedOrder;
   });
 }
-module.exports = { getSalesOrders, getSalesOrderById, createSalesOrder, confirmSalesOrder, calculateLineTotal,};
+module.exports = { getSalesOrders, getSalesOrderById, createSalesOrder, confirmSalesOrder,};

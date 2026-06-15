@@ -189,6 +189,7 @@ Local setup:
 ```powershell
 cd backend
 npx prisma migrate dev--name init_product
+npx prisma validate
 npx prisma generate
 
 ## Week 3 Business Flow Test Scenarios

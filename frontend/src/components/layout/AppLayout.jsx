@@ -38,6 +38,10 @@ function AppLayout({ children }) {
                                 <ShoppingCart size={18} />
                                 Sales Orders
                             </NavLink>
+                            <NavLink to="/stock-movements" className={linkClass}>
+                                <Package size={18} />
+                                Stock Movements
+                            </NavLink>
                         </nav>
                     </div>
                 </div>

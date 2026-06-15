@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { getCustomers, deleteCustomer } from '../api/customerApi';
 import Card from '../components/ui/Card';
+import LoadingMessage from '../components/ui/LoadingMessage';
+import ErrorMessage from '../components/ui/ErrorMessage';
+import EmptyState from '../components/ui/EmptyState';
 
 function CustomersPage() {
     const [customers, setCustomers] = useState([]);
@@ -51,22 +54,11 @@ function CustomersPage() {
             </div>
             <Card>
                 {loading ? (
-                    <p className="text-white">
-                        Loading customers...
-                    </p>
+                    <LoadingMessage message="Loading customers..." /> 
                 ) : error ? (
-                        <div role="alert" className="rounded-md border border-red-300 bg-red-100 p-4 text-red-700">
-                            {error}
-                        </div>
+                        <ErrorMessage message={error} />
                     ) : customers.length === 0 ? (
-                        <div className="rounded-md border border-dashed border-slate-600 p-6 text-center">
-                            <p className="text-lg font-semibold text-white">
-                                No customers found
-                            </p>
-                            <p className="mt-2 text-slate-300">
-                                Create your first customer from the backend API.
-                            </p>
-                        </div>
+                        <EmptyState title="No customers found." description="Create a customer before creating sales orders."/>
                     ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
@@ -85,13 +77,13 @@ function CustomersPage() {
                                         <td className="px-6 py-4 font-semibold text-cyan-300">
                                             {customer.code}
                                         </td>
-                                        <td className="px-6 py-4 text-white">
+                                        <td className="px-6 py-4 font-semibold text-white">
                                             {customer.name}
                                         </td>
-                                        <td className="px-6 py-4 text-yellow-300">
+                                        <td className="px-6 py-4  font-semibold text-yellow-300">
                                             {customer.phone || '-'}
                                         </td>
-                                        <td className="px-6 py-4 text-green-400">
+                                        <td className="px-6 py-4 font-semibold text-green-400">
                                             {customer.email || '-'}
                                         </td>
                                         <td className="px-6 py-4">
