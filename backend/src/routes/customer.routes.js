@@ -1,20 +1,43 @@
 const express = require('express');
-
-const {
-  listCustomers,
-  getCustomer,
-  createCustomer,
-  updateCustomer,
-  deleteCustomer,
-} = require('../controllers/customer.controller');
-
 const router = express.Router();
+
 const customerController = require('../controllers/customer.controller');
-console.log(customerController);
-router.get('/', listCustomers);
-router.get('/:id', getCustomer);
-router.post('/', createCustomer);
-router.patch('/:id', updateCustomer);
-router.delete('/:id', deleteCustomer);
+const auth = require('../middleware/auth');
+const requireRole = require('../middleware/requireRole');
+
+router.get(
+    '/',
+    auth,
+    requireRole('ADMIN', 'SALES_USER'),
+    customerController.listCustomers
+);
+
+router.get(
+    '/:id',
+    auth,
+    requireRole('ADMIN', 'SALES_USER'),
+    customerController.getCustomer
+);
+
+router.post(
+    '/',
+    auth,
+    requireRole('ADMIN'),
+    customerController.createCustomer
+);
+
+router.patch(
+    '/:id',
+    auth,
+    requireRole('ADMIN'),
+    customerController.updateCustomer
+);
+
+router.delete(
+    '/:id',
+    auth,
+    requireRole('ADMIN'),
+    customerController.deleteCustomer
+);
 
 module.exports = router;

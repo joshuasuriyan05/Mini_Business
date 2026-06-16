@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-
+const authRoutes = require('./routes/auth.routes'); 
 const productRoutes = require('./routes/product.routes');
 const customerRoutes = require('./routes/customer.routes');
 const salesOrderRoutes = require('./routes/salesOrder.routes');
@@ -23,6 +23,7 @@ app.use('/api/customers', customerRoutes);
 app.use('/api/sales-orders', salesOrderRoutes);
 app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/stock-movements', stockMovementRoutes);
+app.use('/api/auth', authRoutes)
 app.use(notFound);
 app.use(errorHandler);
 

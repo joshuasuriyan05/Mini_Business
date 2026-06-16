@@ -1,0 +1,22 @@
+name: Deploy Frontend to Hostinger Websites
+on:
+  workflow_dispatch:
+jobs:
+  deploy-frontend:
+    name: Frontend deployment placeholder
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Deployment placeholder
+        run: |
+          echo "Frontend deployment will be configured by the trainer or senior developer."
+          echo "The React app should be built into frontend/dist before upload."
+          echo "Do not store real secrets in this file."
+          echo "Required secrets:"
+          echo "HOSTINGER_HOST"
+          echo "HOSTINGER_USERNAME"
+          echo "HOSTINGER_PORT"
+          echo "HOSTINGER_SSH_KEY"
+          echo "HOSTINGER_FRONTEND_PATH"
+          echo "PRODUCTION_API_BASE_URL"
