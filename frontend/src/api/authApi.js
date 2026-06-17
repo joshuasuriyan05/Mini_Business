@@ -1,6 +1,6 @@
 import { handleResponse } from './httpClient';
 const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+    import.meta.env.VITE_API_BASE_URL || 'https://mini-businessw.onrender.com/api';
 export async function login(credentials) {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
         method: 'POST',

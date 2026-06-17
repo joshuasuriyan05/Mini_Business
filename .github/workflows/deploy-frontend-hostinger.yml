@@ -40,5 +40,4 @@ jobs:
           REMOTE_USER: ${{ secrets.HOSTINGER_FRONTEND_USER }}
           REMOTE_PORT: ${{ secrets.HOSTINGER_FRONTEND_PORT }}
           SOURCE: frontend/dist/
-          TARGET: ${{ secrets.HOSTINGER_FRONTEND_PATH }}
-          ARGS: -az --delete
+          TARGET: ${{ secrets.HOSTINGER_FRONTEND_PATH }}          
