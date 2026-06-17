@@ -2,7 +2,7 @@ import { handleResponse } from './httpClient';
 import { getAuthHeaders } from './authHeaders';
 
 const API_BASE_URL =
-    import.meta.env.VITE_API_BASE_URL || 'https://mini-businessw.onrender.com/api';
+    import.meta.env.VITE_API_BASE_URL || 'https://mini-business-1.onrender.com/api';
 
 export async function getProducts() {
     const response = await fetch(
