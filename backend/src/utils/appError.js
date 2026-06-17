@@ -3,4 +3,4 @@ function createAppError(message, statusCode = 400) {
     error.statusCode = statusCode;
     return error;
 }
-module.exports  = { createAppError, };s
+module.exports  = { createAppError, };
