@@ -38,7 +38,8 @@ app.use('/api/products', productRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/sales-orders', salesOrderRoutes);
 app.use('/api/stock-movements', stockMovementRoutes);
-
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
 app.use((req, res) => {
     res.status(404).json({
         message: `Route not found: ${req.originalUrl}`
