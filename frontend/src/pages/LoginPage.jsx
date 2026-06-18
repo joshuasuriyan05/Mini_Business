@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Card from '../components/ui/Card';
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api';
+  import.meta.env.VITE_API_BASE_URL || 'https://mini-business-1.onrender.com/api';
 
 function LoginPage() {
   const navigate = useNavigate();
