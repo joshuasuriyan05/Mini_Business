@@ -1,38 +1,84 @@
-let products = [
-    { id: 1, sku: 'P001', name: 'Notebook', price: 50, stockQty: 100 },
-    { id: 2, sku: 'P002', name: 'Pen', price: 10, stockQty: 500 }
-];
-function getAllProducts() {
-    return products;
+const { prisma } = require('../lib/prisma');
+const { createAppError } = require('../utils/appError');
+
+async function getAllProducts() {
+  return prisma.product.findMany({
+    orderBy: {
+      id: 'asc',
+    },
+  });
 }
-function getProductById(id) {
-    return products.find(product => product.id === id);
+
+async function getProductById(id) {
+  return prisma.product.findUnique({
+    where: {
+      id,
+    },
+  });
 }
-function createProduct(data) {
-    if (!data.sku || !data.name) {
-        const error = new Error('SKU and name are required');
-        error.statusCode = 400;
-        throw error;
-    }
-    if (Number(data.price) <= 0) {
-        const error = new Error('Price must be greater than zero');
-        error.statusCode = 400;
-        throw error;
-    }
-    const existingProduct = products.find(product => product.sku === data.sku);
-    if (existingProduct) {
-        const error = new Error('SKU already exists');
-        error.statusCode = 400;
-        throw error;
-    }
-    const newProduct = {
-        id: products.length + 1,
-        sku: data.sku,
-        name: data.name,
-        price: Number(data.price),
-        stockQty: Number(data.stockQty || 0)
-    };
-    products.push(newProduct);
-    return newProduct;
+
+async function createProduct(data) {
+  const { sku, name, price, stockQty } = data;
+
+  if (!sku || !name) {
+    throw createAppError(
+      'SKU and name are required',
+      400
+    );
+  }
+
+  if (Number(price) <= 0) {
+    throw createAppError(
+      'Price must be greater than zero',
+      400
+    );
+  }
+
+  const existingProduct =
+    await prisma.product.findUnique({
+      where: {
+        sku,
+      },
+    });
+
+  if (existingProduct) {
+    throw createAppError(
+      'SKU already exists',
+      400
+    );
+  }
+
+  return prisma.product.create({
+    data: {
+      sku,
+      name,
+      price: Number(price),
+      stockQty: Number(stockQty || 0),
+    },
+  });
 }
-module.exports = {getAllProducts, getProductById, createProduct}
+
+async function updateProduct(id, data) {
+  return prisma.product.update({
+    where: {
+      id,
+    },
+    data,
+  });
+}
+
+async function deleteProduct(id) {
+  return prisma.product.delete({
+    where: {
+      id,
+    },
+  });
+}
+
+module.exports = {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+};

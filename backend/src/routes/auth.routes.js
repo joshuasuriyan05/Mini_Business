@@ -2,21 +2,17 @@ const express = require('express');
 const router = express.Router();
 
 const {
-    register,
-    login,
+  register,
+  login
 } = require('../controllers/auth.controller');
 
-// Register user
 router.post('/register', register);
-
-// Login user
 router.post('/login', login);
 
-// Optional health check route
 router.get('/', (req, res) => {
-    res.json({
-        message: 'Auth API is working',
-    });
+  res.json({
+    message: 'Auth API working'
+  });
 });
 
 module.exports = router;

@@ -28,12 +28,16 @@ function ProductsPage() {
             setError('');
 
             const data = await getProducts();
-            setProducts(data);
+
+            setProducts(
+                Array.isArray(data) ? data : []
+            );
         } catch (err) {
             setError(
                 err?.message ||
-                    'Failed to load products'
+                'Failed to load products'
             );
+            setProducts([]);
         } finally {
             setLoading(false);
         }
@@ -56,7 +60,7 @@ function ProductsPage() {
         } catch (err) {
             alert(
                 err?.message ||
-                    'Failed to delete product'
+                'Failed to delete product'
             );
         }
     }
@@ -70,18 +74,18 @@ function ProductsPage() {
                     </h2>
 
                     <p className="mt-2 text-lg text-white">
-                        {products.length} Product(s)
-                        loaded from the backend API.
+                        {products.length} Product(s) loaded from the backend API.
                     </p>
                 </div>
 
-                {/* Always visible for tests */}
-                <Link
-                    to="/products/new"
-                    className="rounded-md bg-blue-500 px-4 py-2 font-medium text-white transition hover:bg-blue-600"
-                >
-                    + Add Product
-                </Link>
+                {isAdmin && (
+                    <Link
+                        to="/products/new"
+                        className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
+                    >
+                        + Add Product
+                    </Link>
+                )}
             </div>
 
             <Card>
@@ -92,93 +96,70 @@ function ProductsPage() {
                 ) : products.length === 0 ? (
                     <EmptyState
                         title="No products found"
-                        description="Please add some products to start using the app."
+                        description="Please add some products."
                     />
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left">
                             <thead>
                                 <tr className="bg-slate-800 text-cyan-300">
-                                    <th className="px-6 py-4">
-                                        SKU
-                                    </th>
-                                    <th className="px-6 py-4">
-                                        Name
-                                    </th>
-                                    <th className="px-6 py-4">
-                                        Price
-                                    </th>
-                                    <th className="px-6 py-4">
-                                        Stock
-                                    </th>
-                                    <th className="px-6 py-4">
-                                        Actions
-                                    </th>
+                                    <th className="px-6 py-4">SKU</th>
+                                    <th className="px-6 py-4">Name</th>
+                                    <th className="px-6 py-4">Price</th>
+                                    <th className="px-6 py-4">Stock</th>
+                                    <th className="px-6 py-4">Actions</th>
                                 </tr>
                             </thead>
 
                             <tbody>
-                                {products.map(
-                                    (product) => (
-                                        <tr
-                                            key={product.id}
-                                            className="border-b border-slate-700 hover:bg-slate-800/40"
-                                        >
-                                            <td className="px-6 py-4 font-semibold text-cyan-300">
-                                                {
-                                                    product.sku
-                                                }
-                                            </td>
+                                {products.map((product) => (
+                                    <tr
+                                        key={product.id}
+                                        className="border-b border-slate-700 hover:bg-slate-800/40"
+                                    >
+                                        <td className="px-6 py-4 font-semibold text-cyan-300">
+                                            {product.sku}
+                                        </td>
 
-                                            <td className="px-6 py-4 font-semibold text-white">
-                                                {
-                                                    product.name
-                                                }
-                                            </td>
+                                        <td className="px-6 py-4 font-semibold text-white">
+                                            {product.name}
+                                        </td>
 
-                                            <td className="px-6 py-4 font-semibold text-green-400">
-                                                {formatPrice(
-                                                    product.price
-                                                )}
-                                            </td>
+                                        <td className="px-6 py-4 font-semibold text-green-400">
+                                            {formatPrice(product.price)}
+                                        </td>
 
-                                            <td className="px-6 py-4 font-semibold text-yellow-300">
-                                                {
-                                                    product.stockQty
-                                                }
-                                            </td>
+                                        <td className="px-6 py-4 font-semibold text-yellow-300">
+                                            {product.stockQty}
+                                        </td>
 
-                                            <td className="px-6 py-4">
-                                                {isAdmin ? (
-                                                    <div className="flex gap-3">
-                                                        <Link
-                                                            to={`/products/${product.id}/edit`}
-                                                            className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-700"
-                                                        >
-                                                            Update
-                                                        </Link>
+                                        <td className="px-6 py-4">
+                                            {isAdmin ? (
+                                                <div className="flex gap-3">
+                                                    <Link
+                                                        to={`/products/${product.id}/edit`}
+                                                        className="rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-700"
+                                                    >
+                                                        Update
+                                                    </Link>
 
-                                                        <button
-                                                            onClick={() =>
-                                                                handleDelete(
-                                                                    product.id
-                                                                )
-                                                            }
-                                                            className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-red-700"
-                                                        >
-                                                            Delete
-                                                        </button>
-                                                    </div>
-                                                ) : (
-                                                    <span className="text-slate-400">
-                                                        View
-                                                        Only
-                                                    </span>
-                                                )}
-                                            </td>
-                                        </tr>
-                                    )
-                                )}
+                                                    <button
+                                                        onClick={() =>
+                                                            handleDelete(product.id)
+                                                        }
+                                                        className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white hover:bg-red-700"
+                                                    >
+                                                        Delete
+                                                    </button>
+                                                </div>
+                                            ) : (
+                                                <span className="text-slate-400">
+                                                    View Only
+                                                </span>
+                                            )}
+                                        </td>
+                                    </tr>
+                                ))}
                             </tbody>
                         </table>
                     </div>
@@ -187,5 +168,4 @@ function ProductsPage() {
         </div>
     );
 }
-
 export default ProductsPage;
