@@ -4,54 +4,27 @@ const cors = require('cors');
 const productRoutes = require('./routes/product.routes');
 const customerRoutes = require('./routes/customer.routes');
 const salesOrderRoutes = require('./routes/salesOrder.routes');
+const dashboardRoutes = require('./routes/dashboard.routes');
 const stockMovementRoutes = require('./routes/stockMovement.routes');
+const notFound = require('./middleware/notFound');
+const errorHandler = require('./middleware/errorHandler');
 const authRoutes = require('./routes/auth.routes');
 
 const app = express();
 
-app.use(
-    cors({
-        origin: [
-            'http://localhost:5173',
-            'https://mini-business-mu.vercel.app'
-        ],
-        credentials: true
-    })
-);
-
+app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-    res.json({
-        message: 'Mini Business API Running'
-    });
-});
-
 app.get('/health', (req, res) => {
-    res.json({
-        status: 'ok'
-    });
+    res.json({ status: 'ok' });
 });
-
-app.use('/api/auth', authRoutes);
+app.use('/api/auth',authRoutes)
 app.use('/api/products', productRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/sales-orders', salesOrderRoutes);
+app.use('/api/dashboard', dashboardRoutes);
 app.use('/api/stock-movements', stockMovementRoutes);
-app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use((req, res) => {
-    res.status(404).json({
-        message: `Route not found: ${req.originalUrl}`
-    });
-});
-
-app.use((err, req, res, next) => {
-    console.error(err);
-
-    res.status(err.statusCode || 500).json({
-        message: err.message || 'Internal server error'
-    });
-});
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;

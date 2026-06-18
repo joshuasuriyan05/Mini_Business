@@ -2,142 +2,98 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { prisma } = require('../lib/prisma');
 
-function createAppError(message, statusCode = 400) {
-    const error = new Error(message);
-    error.statusCode = statusCode;
-
-    return error;
+function createError(message, statusCode = 400) {
+  const err = new Error(message);
+  err.statusCode = statusCode;
+  return err;
 }
 
-function createToken(user) {
-    if (!process.env.JWT_SECRET) {
-        throw createAppError(
-            'JWT_SECRET is missing',
-            500
-        );
-    }
-
-    return jwt.sign(
-        {
-            userId: user.id,
-            email: user.email,
-            role: user.role,
-        },
-        process.env.JWT_SECRET,
-        {
-            expiresIn: '1d',
-        }
-    );
+function generateToken(user) {
+  return jwt.sign(
+    {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: '7d' }
+  );
 }
 
 async function registerUser(data) {
-    const { name, email, password } = data;
+  const { name, email, password } = data;
 
-    if (!name || !email || !password) {
-        throw createAppError(
-            'Name, email and password are required',
-            400
-        );
-    }
+  if (!name || !email || !password) {
+    throw createError('All fields are required');
+  }
 
-    const existingUser =
-        await prisma.user.findUnique({
-            where: {
-                email,
-            },
-        });
+  const existingUser = await prisma.user.findUnique({
+    where: { email },
+  });
 
-    if (existingUser) {
-        throw createAppError(
-            'Email already exists',
-            400
-        );
-    }
+  if (existingUser) {
+    throw createError('User already exists');
+  }
 
-    const passwordHash = await bcrypt.hash(
-        password,
-        10
-    );
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = await prisma.user.create({
-        data: {
-            name,
-            email,
-            passwordHash,
-            role: 'SALES_USER',
-        },
-    });
+  const user = await prisma.user.create({
+    data: {
+      name,
+      email,
+      passwordHash: hashedPassword,   // ✅ FIXED
+      role: 'USER',
+    },
+  });
 
-    return {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-    };
+  return {
+    message: 'User registered successfully',
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+    },
+  };
 }
 
 async function loginUser(data) {
-    const { email, password } = data;
+  const { email, password } = data;
 
-    if (!email || !password) {
-        throw createAppError(
-            'Email and password are required',
-            400
-        );
-    }
+  if (!email || !password) {
+    throw createError('Email and password required');
+  }
 
-    const user =
-        await prisma.user.findUnique({
-            where: {
-                email,
-            },
-        });
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
 
-    console.log('Login Email:', email);
-    console.log(
-        'User Found:',
-        user ? 'YES' : 'NO'
-    );
+  if (!user) {
+    throw createError('Invalid credentials', 401);
+  }
 
-    if (!user) {
-        throw createAppError(
-            'Invalid credentials',
-            401
-        );
-    }
+  // ❌ WRONG: user.password
+  // ✅ CORRECT: user.passwordHash
+  const isMatch = await bcrypt.compare(password, user.passwordHash);
 
-    const passwordMatches =
-        await bcrypt.compare(
-            password,
-            user.passwordHash
-        );
+  if (!isMatch) {
+    throw createError('Invalid credentials', 401);
+  }
 
-    console.log(
-        'Password Matches:',
-        passwordMatches
-    );
+  const token = generateToken(user);
 
-    if (!passwordMatches) {
-        throw createAppError(
-            'Invalid credentials',
-            401
-        );
-    }
-
-    const token = createToken(user);
-
-    return {
-        token,
-        user: {
-            id: user.id,
-            name: user.name,
-            email: user.email,
-            role: user.role,
-        },
-    };
+  return {
+    message: 'Login successful',
+    token,
+    user: {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    },
+  };
 }
 
 module.exports = {
-    registerUser,
-    loginUser,
+  registerUser,
+  loginUser,
 };
