@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const {prisma } = require('../lib/prisma');
+const {prisma} = require('../lib/prisma');
 function createAppError(message, statusCode = 400) {
   const error = new Error(message);
   error.statusCode = statusCode;
