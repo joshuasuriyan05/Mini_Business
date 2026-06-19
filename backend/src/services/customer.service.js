@@ -39,7 +39,9 @@ async function createCustomer(data) {
     return prisma.customer.create({
         data: {
             code: data.code.trim(),
-            name: data.name.trim(),
+           
+            
+            
             phone: data.phone?.trim() || null,
             email: data.email?.trim() || null
         }
