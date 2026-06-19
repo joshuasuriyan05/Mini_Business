@@ -8,6 +8,7 @@ const dashboardRoutes = require('./routes/dashboard.routes');
 const stockMovementRoutes = require('./routes/stockMovement.routes');
 const notFound = require('./middleware/notFound');
 const errorHandler = require('./middleware/errorHandler');
+const authRoutes = require('./routes/auth.routes');
 
 const app = express();
 
@@ -17,7 +18,7 @@ app.use(express.json());
 app.get('/health', (req, res) => {
     res.json({ status: 'ok' });
 });
-
+app.use('/api/auth',authRoutes)
 app.use('/api/products', productRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/sales-orders', salesOrderRoutes);

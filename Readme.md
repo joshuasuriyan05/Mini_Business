@@ -208,3 +208,24 @@ Covered API scenarios:- Health endpoint works- Product can be created- Customer 
 5. Verify stock reduction.
 6. Verify double confirmation is blocked.
 7. Verify insufficient stock is rejected
+
+## CI and Deployment Notes
+This project uses GitHub Actions for automated checks.
+### CI
+The CI workflow is located at:
+`.github/workflows/ci.yml`
+It runs on pull requests and pushes to `main`.
+Current checks:- Backend dependency install- Backend tests- Frontend dependency install- Frontend tests- Frontend production build
+### Deployment Workflow Placeholders
+Deployment workflow placeholder files:- `.github/workflows/deploy-backend-hostinger.yml`- `.github/workflows/deploy-frontend-hostinger.yml`
+These files do not contain real deployment secrets.
+Actual deployment secrets must be configured in GitHub repository settings.
+Required secret names may include:
+        - `HOSTINGER_HOST`
+        - `HOSTINGER_USERNAME`
+        - `HOSTINGER_PORT`
+        - `HOSTINGER_SSH_KEY`
+        - `HOSTINGER_BACKEND_PATH`
+        - `HOSTINGER_FRONTEND_PATH`
+        - `PRODUCTION_DATABASE_URL`
+        - `PRODUCTION_API_BASE_URL`

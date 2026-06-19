@@ -1,130 +1,84 @@
+const { prisma } = require('../lib/prisma');
 const { createAppError } = require('../utils/appError');
-const {prisma} = require('../lib/prisma');
-function normalizeProductInput(data) {
-    return {
-        sku: data.sku?.trim(),
-        name: data.name?.trim(),
-        price: data.price,
-        stockQty: data.stockQty
-    };
-}
-function validateProductInput(data, { partial = false } = {}) {
-    const errors = [];
-    if (!partial || data.sku !== undefined) {
-        if (!data.sku || !String(data.sku).trim()) {
-            errors.push('SKU is required');
-            
-        }
-    }
-    if (!partial || data.name !== undefined) {
-        if (!data.name || !String(data.name).trim()) {
-            errors.push('Name is required');
-        }
-    }
-    if (!partial || data.price !== undefined) {
-        const price = Number(data.price);
-        if (Number.isNaN(price) || price <= 0) {
-            errors.push('Price must be greater than zero');
-        }
-    }
-    if (!partial || data.stockQty !== undefined) {
-        const stockQty = Number(data.stockQty);
-        if (Number.isNaN(stockQty) || stockQty < 0) {
-            errors.push('Stock quantity cannot be negative');
-        }
-    }
-    if (errors.length > 0) {
-        const error = new Error(errors.join(', '));
-        error.statusCode = 400;
-        throw error;
-    }
-}
+
 async function getAllProducts() {
-    return prisma.product.findMany({
-        where: {
-            isActive: true
-        },
-        orderBy: {
-            id: 'desc'
-        }
-    });
+  return prisma.product.findMany({
+    orderBy: {
+      id: 'asc',
+    },
+  });
 }
+
 async function getProductById(id) {
-    return prisma.product.findFirst({
-        where: {
-            id,
-            isActive: true
-        }
-    });
+  return prisma.product.findUnique({
+    where: {
+      id,
+    },
+  });
 }
+
 async function createProduct(data) {
-    validateProductInput(data);
-    const normalized = normalizeProductInput(data);
-    try {
-        return await prisma.product.create({
-            data: {
-                sku: normalized.sku,
-                name: normalized.name,
-                price: normalized.price,
-                stockQty: Number(normalized.stockQty || 0)
-            }
-        });
-    } catch (error) {
-        if (error.code === 'P2002') {
-            const duplicateError = new Error('SKU already exists');
-            duplicateError.statusCode = 400;
-            throw duplicateError;
-        }
-        throw error;
-    }
-}
-async function updateProduct(id, data) {
-    validateProductInput(data, { partial: true });
-    const existingProduct = await getProductById(id);
-    if (!existingProduct) {
-        throw createAppError('SKU already exists', 400);
-    }
-    const updateData = {};
-    if (data.sku !== undefined) {
-        updateData.sku = String(data.sku).trim();
-    }
-    if (data.name !== undefined) {
-        updateData.name = String(data.name).trim();
-    }
-    if (data.price !== undefined) {
-        updateData.price = data.price;
-    }
-    if (data.stockQty !== undefined) {
-        updateData.stockQty = Number(data.stockQty);
-    }
-    try {
-        return await prisma.product.update({
-            where: {
-                id
-            },
-            data: updateData
-        });
-    } catch (error) {
-        if (error.code === 'P2002') {
-            const duplicateError = new Error('SKU already exists');
-            duplicateError.statusCode = 400;
-            throw duplicateError;
-        }
-        throw error;
-    }
-}
-async function deleteProduct(id) {
-    const existingProduct = await getProductById(id);
-    if (!existingProduct) {
-        throw createAppError('SKU already exists', 400);
-    }
-    return prisma.product.update({
-        where: {
-            id
-        },
-        data: {
-            isActive: false
-        }
+  const { sku, name, price, stockQty } = data;
+
+  if (!sku || !name) {
+    throw createAppError(
+      'SKU and name are required',
+      400
+    );
+  }
+
+  if (Number(price) <= 0) {
+    throw createAppError(
+      'Price must be greater than zero',
+      400
+    );
+  }
+
+  const existingProduct =
+    await prisma.product.findUnique({
+      where: {
+        sku,
+      },
     });
+
+  if (existingProduct) {
+    throw createAppError(
+      'SKU already exists',
+      400
+    );
+  }
+
+  return prisma.product.create({
+    data: {
+      sku,
+      name,
+      price: Number(price),
+      stockQty: Number(stockQty || 0),
+    },
+  });
 }
-module.exports = { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct };
+
+async function updateProduct(id, data) {
+  return prisma.product.update({
+    where: {
+      id,
+    },
+    data,
+  });
+}
+
+async function deleteProduct(id) {
+  return prisma.product.delete({
+    where: {
+      id,
+    },
+  });
+}
+
+module.exports = {
+  getAllProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+};

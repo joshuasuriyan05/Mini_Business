@@ -1,0 +1,21 @@
+name: Deploy Backend to Hostinger
+on:
+  workflow_dispatch:
+jobs:
+  deploy-backend:
+    name: Backend deployment placeholder
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Deployment placeholder
+        run: |
+            echo "Backend deployment will be configured by the trainer or senior developer."
+            echo "Do not store real secrets in this file."
+            echo "Required secrets:"
+            echo "HOSTINGER_HOST"
+            echo "HOSTINGER_USERNAME"
+            echo "HOSTINGER_PORT"
+            echo "HOSTINGER_SSH_KEY"
+            echo "HOSTINGER_BACKEND_PATH"
+            echo "PRODUCTION_DATABASE_URL"

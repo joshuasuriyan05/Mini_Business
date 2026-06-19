@@ -5,7 +5,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  //url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL")
 }
 
 model Product {
@@ -15,8 +15,6 @@ model Product {
   price           Decimal
   stockQty        Int              @default(0)
   isActive        Boolean          @default(true)
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
   salesOrderItems SalesOrderItem[]
   stockMovements  StockMovement[]
 }
@@ -51,20 +49,28 @@ model SalesOrderItem {
   productId    Int
   quantity     Int
   unitPrice    Decimal
-  totalPrice   Decimal    @default(0)
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id])
+  totalPrice   Decimal
   product      Product    @relation(fields: [productId], references: [id])
+  salesOrder   SalesOrder @relation(fields: [salesOrderId], references: [id])
 }
 
 model StockMovement {
-  id            Int                       @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   productId     Int
-  product       Product                   @relation(fields: [productId], references: [id])
   movementType  String
   quantity      Int
-  referenceType String?
+  referenceType String
   referenceId   Int?
   createdAt     DateTime @default(now())
+  product       Product  @relation(fields: [productId], references: [id])
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("SALES_USER")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }

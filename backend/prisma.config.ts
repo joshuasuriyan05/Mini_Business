@@ -9,6 +9,7 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env["DATABASE_URL"]!,
+    // Use globalThis to access process.env without requiring Node types
+    url: (globalThis as any).process?.env?.DATABASE_URL,
   },
 });
